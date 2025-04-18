@@ -5,6 +5,7 @@ using UnityEngine.InputSystem.XR;
 
 public class TeleporterBehaviour : MonoBehaviour
 {
+    private bool ItHurts;
     private Vector3 destination;
     // Start is called before the first frame update
     void Start()

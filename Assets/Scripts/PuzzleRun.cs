@@ -19,7 +19,7 @@ public class PuzzleRun : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        ChooseCombination();
     }
 
     // Update is called once per frame
@@ -34,10 +34,19 @@ public class PuzzleRun : MonoBehaviour
 
         frame.GetComponent<MeshRenderer>().material = prc.material;
 
-        foreach (GameObject go in listGameObjectsComb)
+        for (int i = 0; i < 5; i++)
         {
-            foreach(Transform t in go.transform)
+            for (int j = 0; j < 5; j++)
             {
+                if (prc.combination[i][j].Equals('O'))
+                {
+                    listGameObjectsComb[i].transform.GetChild(j).GetComponent<BoxCollider>().isTrigger = true;
+                }
+
+                else if (prc.combination[i][j].Equals('X'))
+                {
+                    listGameObjectsComb[i].transform.GetChild(j).GetComponent<BoxCollider>().isTrigger = false;
+                }
             }
         }
     }

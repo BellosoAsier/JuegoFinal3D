@@ -80,7 +80,18 @@ public class PlayerBehaviour : MonoBehaviour
 
     private bool PlayerGrounded()
     {
-        return Physics.CheckSphere(playerTransform.position + new Vector3(0f,0.1f,0f), detectionRadius, layerToDetect);
+        Collider[] colliders = Physics.OverlapSphere(playerTransform.position + new Vector3(0f, 0.1f, 0f), detectionRadius, layerToDetect);
+
+        foreach (Collider collider in colliders)
+        {
+            if (!collider.isTrigger)
+            {
+                return true; // Está tocando el suelo (collider no es trigger)
+            }
+        }
+
+        return false; // No se encontró ningún collider válido
+        //return Physics.CheckSphere(playerTransform.position + new Vector3(0f,0.1f,0f), detectionRadius, layerToDetect);
     }
 
     private void RotateToDestination()
