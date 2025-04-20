@@ -21,6 +21,10 @@ public class RaycastWeapon : MonoBehaviour
         if (Physics.Raycast(rayOrigin, playerCamera.transform.forward, out hit, weaponRange))
         {
             laserLine.SetPosition(1, hit.point);
+            if(hit.transform.gameObject.TryGetComponent(out Damageable damageSystem))
+            {
+                damageSystem.DamageTarget(20f);
+            }
         }
         else
         {

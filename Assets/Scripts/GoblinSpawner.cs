@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -8,6 +9,7 @@ public class GoblinSpawner : MonoBehaviour
     [SerializeField] private List<Transform> listSpawnPositions;
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject enemyContainer;
+    [SerializeField] private GameObject mainDoor;
 
     [Header("Configuration")]
     [SerializeField] private int numberOfWaves;
@@ -20,23 +22,36 @@ public class GoblinSpawner : MonoBehaviour
     [SerializeField] private GameObject weaponPrefab;
     [SerializeField] private GameObject hand;
 
+    [Header("Canvas")]
+    [SerializeField] private GameObject zombieCanvas;
+    [SerializeField] private TMP_Text waveIndicatorText;
+
     private GameObject obj;
 
-    private bool HasCombatEnded = false;
+    private bool HasMinigameEnded = false;
     private Coroutine coroutineEnemy;
     private PlayerBehaviour player;
+    private int numberOfEnemiesKilled = 0;
+
+    public int NumberOfEnemiesKilled { get => numberOfEnemiesKilled; set => numberOfEnemiesKilled = value; }
+
     // Start is called before the first frame update
     private void OnEnable()
     {
+        CloseDoor();
         player = FindFirstObjectByType<PlayerBehaviour>();
         player.IsZombieMinigame = true;
         totalNumberOfEnemies = numberOfWaves * numberOfEnemiesPerWave;
+        zombieCanvas.SetActive(true);
+        waveIndicatorText.text = "Enemy count:\n" + numberOfEnemiesKilled + "/" + totalNumberOfEnemies;
         coroutineEnemy = StartCoroutine(EnemiesWave(secondsBetweenWaves, secondsBetweenEnemies));
         AddWeapon();
     }
 
     private void OnDisable()
     {
+        numberOfEnemiesKilled = 0;
+        zombieCanvas.SetActive(false);
         if (coroutineEnemy != null)
         {
             StopAllCoroutines();
@@ -50,12 +65,22 @@ public class GoblinSpawner : MonoBehaviour
         player.IsZombieMinigame = false;
 
         RemoveWeapon();
+
+        if (HasMinigameEnded)
+        {
+            //TODO: 
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (numberOfEnemiesKilled.Equals(totalNumberOfEnemies))
+        {
+            FindAnyObjectByType<GameManager>().Minigame1_Flag = true;
+            OpenDoor();
+        }
+        waveIndicatorText.text = "Enemy count:\n" + numberOfEnemiesKilled + "/" + totalNumberOfEnemies;
     }
 
     private void AddWeapon()
@@ -75,19 +100,27 @@ public class GoblinSpawner : MonoBehaviour
 
     IEnumerator EnemiesWave(float secondsWave, float secondsEnemy)
     {
-        while (!HasCombatEnded)
+        for (int i = 0; i < numberOfWaves; i++)
         {
-            for (int i = 0; i < numberOfWaves; i++)
+            for (int j = 0; j < numberOfEnemiesPerWave; j++)
             {
-                for (int j = 0; j < numberOfEnemiesPerWave; j++)
-                {
-                    Transform spawnPosition = listSpawnPositions[Random.Range(0, listSpawnPositions.Count)];
-                    GameObject enemy = Instantiate(enemyPrefab, spawnPosition.position, Quaternion.identity);
-                    enemy.transform.SetParent(enemyContainer.transform);
-                    yield return new WaitForSeconds(secondsEnemy);
-                }
-                yield return new WaitForSeconds(secondsWave);
+                Transform spawnPosition = listSpawnPositions[Random.Range(0, listSpawnPositions.Count)];
+                GameObject enemy = Instantiate(enemyPrefab, spawnPosition.position, Quaternion.identity);
+                enemy.transform.SetParent(enemyContainer.transform);
+                yield return new WaitForSeconds(secondsEnemy);
             }
+            yield return new WaitForSeconds(secondsWave);
         }
+    }
+
+    private void OpenDoor()
+    {
+        mainDoor.transform.GetChild(2).gameObject.SetActive(false);
+        mainDoor.transform.GetChild(3).gameObject.SetActive(false);
+    }
+    private void CloseDoor()
+    {
+        mainDoor.transform.GetChild(2).gameObject.SetActive(true);
+        mainDoor.transform.GetChild(3).gameObject.SetActive(true);
     }
 }

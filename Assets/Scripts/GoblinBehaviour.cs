@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class GoblinBehaviour : MonoBehaviour
+public class GoblinBehaviour : MonoBehaviour, Damageable
 {
     private NavMeshAgent agent;
     private PlayerBehaviour target;
     private Animator animator;
+    [SerializeField] private float health;
+    private float maxHealth;
+
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         target = FindObjectOfType<PlayerBehaviour>();
         animator = GetComponent<Animator>();
+        maxHealth = health;
     }
 
     // Update is called once per frame
@@ -36,5 +40,16 @@ public class GoblinBehaviour : MonoBehaviour
     {
         agent.isStopped = false;
         animator.SetBool("IsAttacking", false);
+    }
+
+    public void DamageTarget(float damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            FindFirstObjectByType<GoblinSpawner>().NumberOfEnemiesKilled += 1; 
+            Destroy(this.gameObject);
+        }
     }
 }

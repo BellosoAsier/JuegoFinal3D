@@ -15,6 +15,7 @@ public class PuzzleRun : MonoBehaviour
     [SerializeField] private List<PuzzleRunCombination> listCombinations;
     [SerializeField] private List<GameObject> listGameObjectsComb;
     [SerializeField] private GameObject frame;
+    [SerializeField] private GameObject mainDoor;
 
     // Start is called before the first frame update
     void Start()
@@ -28,8 +29,10 @@ public class PuzzleRun : MonoBehaviour
         
     }
 
-    private void ChooseCombination()
+    public void ChooseCombination()
     {
+        ResetLevel();
+
         PuzzleRunCombination prc = listCombinations[UnityEngine.Random.Range(0,listCombinations.Count)];
 
         frame.GetComponent<MeshRenderer>().material = prc.material;
@@ -49,5 +52,30 @@ public class PuzzleRun : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void ResetLevel()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                if(!listGameObjectsComb[i].transform.GetChild(j).gameObject.activeSelf)
+                {
+                    listGameObjectsComb[i].transform.GetChild(j).gameObject.SetActive(true);
+                }
+            }
+        }
+    }
+
+    public void OpenDoor()
+    {
+        mainDoor.transform.GetChild(0).gameObject.SetActive(false);
+        mainDoor.transform.GetChild(1).gameObject.SetActive(false);
+    }
+    public void CloseDoor()
+    {
+        mainDoor.transform.GetChild(0).gameObject.SetActive(true);
+        mainDoor.transform.GetChild(1).gameObject.SetActive(true);
     }
 }

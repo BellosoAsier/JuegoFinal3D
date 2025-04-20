@@ -15,6 +15,7 @@ public  class MazeGenerator : MonoBehaviour
 
     private int numberOfTries;
     private int initialNumberOfTries;
+    public static int rewardsAmount;
 
     public struct CellToMove
     {
@@ -176,6 +177,10 @@ public  class MazeGenerator : MonoBehaviour
         {
             FixNumberOfRewards(numberRewards, wall, fixRewards);
         }
+        else
+        {
+            rewardsAmount = CellsWithReward().Count;
+        }
     }
     private void RemoveDuplicateWalls()
     {
@@ -214,19 +219,7 @@ public  class MazeGenerator : MonoBehaviour
 
     private void FixNumberOfRewards(int maxRewards, bool wall, bool fixRewards)
     {
-        List<(int lRow, int lCols, MazeCellScript lCell)> newMazeCell = new List<(int, int, MazeCellScript)>();
-
-        for (int row = 0; row < MazeRowCount; row++)
-        {
-            for (int col = 0; col < MazeColumnCount; col++)
-            {
-                MazeCellScript current = GetMazeCell(row, col);
-                if (current.HasReward)
-                {
-                    newMazeCell.Add((row, col, current));
-                }
-            }
-        }
+        List<(int lRow, int lCols, MazeCellScript lCell)> newMazeCell = CellsWithReward();
 
         if (newMazeCell.Count <= maxRewards)
         {
@@ -255,7 +248,28 @@ public  class MazeGenerator : MonoBehaviour
             cell.HasReward = false;
             SetMazeCell(row, column, cell);
         }
+        rewardsAmount = maxRewards;
     }
+
+    private List<(int lRow, int lCols, MazeCellScript lCell)> CellsWithReward()
+    {
+        List<(int lRow, int lCols, MazeCellScript lCell)> newMazeCell = new List<(int, int, MazeCellScript)>();
+
+        for (int row = 0; row < MazeRowCount; row++)
+        {
+            for (int col = 0; col < MazeColumnCount; col++)
+            {
+                MazeCellScript current = GetMazeCell(row, col);
+                if (current.HasReward)
+                {
+                    newMazeCell.Add((row, col, current));
+                }
+            }
+        }
+
+        return newMazeCell;
+    }
+
     private bool IsCellInList(int row, int column)
     {
         return mazeCellsToMove.FindIndex((other) => other._row == row && other._column == column) >= 0;

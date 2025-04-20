@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum PlayerType { FirstPerson, ThirdPerson}
-public class PlayerBehaviour : MonoBehaviour
+public class PlayerBehaviour : MonoBehaviour, Damageable
 {
     [SerializeField] private PlayerType playerType;
 
+    [Header("Player Characteristics")]
+    [SerializeField] private float health;
+    private float maxHealth;
     [SerializeField] private float jumpForce;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float gravityForce;
@@ -48,6 +52,10 @@ public class PlayerBehaviour : MonoBehaviour
         inputManager.OnShoot += Shoot;
     }
 
+    private void Awake()
+    {
+        maxHealth = health;
+    }
 
     private void Aim(bool x)
     {
@@ -55,6 +63,10 @@ public class PlayerBehaviour : MonoBehaviour
         if (IsZombieMinigame)
         {
             animator.SetBool("IsAiming", x);
+        }
+        else
+        {
+            animator.SetBool("IsAiming", false);
         }
         crosshair.SetActive(x && IsZombieMinigame);
         TogglePlayerType(!x || !IsZombieMinigame);
@@ -191,5 +203,24 @@ public class PlayerBehaviour : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawSphere(playerTransform.position + new Vector3(0f, 0.1f, 0f), detectionRadius);
+    }
+
+    public void DamageTarget(float damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Gem"))
+        {
+            FindAnyObjectByType<MazeSpawner>().CollectedRewards += 1;
+            Destroy(other.gameObject);
+        }
     }
 }

@@ -23,7 +23,7 @@ public class PuzzleRunPlatform : MonoBehaviour
         {
             if (IsPlatform)
             {
-                Destroy(gameObject);
+               gameObject.SetActive(false);
             }
         }
     }
