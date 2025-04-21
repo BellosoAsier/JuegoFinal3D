@@ -1,16 +1,22 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum PlayerType { FirstPerson, ThirdPerson}
 public class PlayerBehaviour : MonoBehaviour, Damageable
 {
     [SerializeField] private PlayerType playerType;
 
-    [Header("Player Characteristics")]
+    [Header("Health")]
+    [SerializeField] private GameObject healthContainer;
     [SerializeField] private float health;
     private float maxHealth;
+
+    [Header("Player Characteristics")]
     [SerializeField] private float jumpForce;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float gravityForce;
@@ -79,6 +85,7 @@ public class PlayerBehaviour : MonoBehaviour, Damageable
             animator.SetTrigger("Shoot");
             CanShoot = false;
             GetComponent<RaycastWeapon>().ShootLaser();
+            transform.GetChild(0).GetComponent<AudioSource>().Play();
         }
        
     }
@@ -209,9 +216,14 @@ public class PlayerBehaviour : MonoBehaviour, Damageable
     {
         health -= damage;
 
+        healthContainer.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = health / maxHealth;
+        GetComponent<AudioSource>().Play();
+
         if (health <= 0)
         {
-            Destroy(this.gameObject);
+            Cursor.lockState = CursorLockMode.None;
+            PlayerPrefs.SetInt("winOrLose", 1);
+            SceneManager.LoadSceneAsync("FinalScene");
         }
     }
 
@@ -219,8 +231,16 @@ public class PlayerBehaviour : MonoBehaviour, Damageable
     {
         if (other.CompareTag("Gem"))
         {
+            other.transform.parent.GetComponent<AudioSource>().Play();
             FindAnyObjectByType<MazeSpawner>().CollectedRewards += 1;
             Destroy(other.gameObject);
+        }
+
+        if (other.CompareTag("Crown"))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            PlayerPrefs.SetInt("winOrLose", 0);
+            SceneManager.LoadSceneAsync("FinalScene");
         }
     }
 }

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Gem
+  - Crown
   layers:
   - Default
   - TransparentFX

@@ -10,8 +10,10 @@ public class GlobalTriggerDetector : MonoBehaviour
     private GoblinSpawner minigame1;
     private MazeSpawner minigame2;
     private PuzzleRun minigame3;
+    private bool firstTime = true;
     private void Start()
     {
+        firstTime = true;
         minigame1 = FindAnyObjectByType<GoblinSpawner>();
         minigame2 = FindAnyObjectByType<MazeSpawner>();
         minigame3 = FindAnyObjectByType<PuzzleRun>();
@@ -37,11 +39,22 @@ public class GlobalTriggerDetector : MonoBehaviour
                 case DetectorType.Minigame3_Restart:
                     minigame3.ChooseCombination();
                     minigame3.OpenDoor();
+
+                    if(FindAnyObjectByType<PlayerBehaviour>().TryGetComponent(out Damageable damageable))
+                    {
+                        damageable.DamageTarget(20f);
+                    }
+
                     break;
                 case DetectorType.Minigame3_CloseDoor:
                     minigame3.CloseDoor();
                     break;
                 case DetectorType.Minigame3_End:
+                    if (firstTime)
+                    {
+                        firstTime = false;
+                        FindAnyObjectByType<PuzzleRun>().GetComponent<AudioSource>().Play();
+                    }
                     FindAnyObjectByType<GameManager>().Minigame3_Flag = true;
                     minigame3.OpenDoor();
                     break;

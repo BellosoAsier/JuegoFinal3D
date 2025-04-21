@@ -4,6 +4,7 @@ using UnityEngine;
 using static UnityEngine.Rendering.DebugUI.Table;
 using UnityEngine.UIElements;
 using TMPro;
+using UnityEngine.XR;
 
 public class MazeSpawner : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class MazeSpawner : MonoBehaviour
     [Header("PREFABS")]
     [SerializeField] private GameObject floorPrefab;
     [SerializeField] private GameObject wallPrefab;
+    [SerializeField] private GameObject roofPrefab;
+    [SerializeField] private GameObject lanternPrefab;
+    [SerializeField] private GameObject hand;
 
     [Header("DIMENSIONS")]
     [SerializeField] private int rows = 5;
@@ -32,12 +36,14 @@ public class MazeSpawner : MonoBehaviour
     [Header("TIMER")]
     [SerializeField] private GameObject mazeCanvas;
     [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text gemsText;
     [SerializeField] private float timerMaze;
     private float timer;
     [SerializeField] private bool MazeRunning;
 
     private MazeGenerator mazeGenerator = null;
     private Vector3 destination;
+    private GameObject obj;
 
     public int CollectedRewards { get => collectedRewards; set => collectedRewards = value; }
 
@@ -57,6 +63,7 @@ public class MazeSpawner : MonoBehaviour
     {
         if (MazeRunning)
         {
+            gemsText.text = "Remaining \n gems:"+(numberRewards-collectedRewards);
             timer -= Time.deltaTime;
             UpdateTimerDisplay(timer);
             if (timer <= 0)
@@ -77,18 +84,37 @@ public class MazeSpawner : MonoBehaviour
 
     public void StartMaze()
     {
-        if(!MazeRunning) collectedRewards = 0;
+        if (!MazeRunning)
+        {
+            collectedRewards = 0;
+            AddLantern();
+        }
         mazeCanvas.SetActive(true);
         MazeRunning = true;
     }
 
+    private void AddLantern()
+    {
+        obj = Instantiate(lanternPrefab, hand.transform.position, hand.transform.rotation);
+        obj.name = "LanternPlayer";
+        obj.transform.SetParent(hand.transform);
+        obj.transform.localScale = new Vector3(30f, 30f, 30f);
+        obj.transform.localPosition = new Vector3(0.037f, 0.083f, -0.144f);
+        obj.transform.localRotation = Quaternion.Euler(120f, 180f, -90f);
+    }
+
     public void EndMaze(bool activatedByPlayer)
     {
+        if (obj != null)
+        {
+            Destroy(obj);
+        }
         if (MazeRunning)
         {
             if (activatedByPlayer && collectedRewards.Equals(MazeGenerator.rewardsAmount))
             {
                 FindAnyObjectByType<GameManager>().Minigame2_Flag = true;
+                GetComponent<AudioSource>().Play();
             }
             ChooseMazeDistribution();
             BuildMaze();
@@ -141,6 +167,9 @@ public class MazeSpawner : MonoBehaviour
                 float z = row * (cellHeight);
                 MazeCellScript cell = mazeGenerator.GetMazeCell(row, column);
                 GameObject tmp = Instantiate(floorPrefab, new Vector3(x, 0, z) + transform.position, Quaternion.Euler(0, 0, 0)) as GameObject;
+                tmp.transform.parent = mazeContainer.transform;
+
+                tmp = Instantiate(roofPrefab, new Vector3(x, 4, z) + transform.position, Quaternion.Euler(0, 0, 0)) as GameObject;
                 tmp.transform.parent = mazeContainer.transform;
 
                 if (row == 0 && column == 0)

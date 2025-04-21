@@ -26,6 +26,7 @@ public class GoblinSpawner : MonoBehaviour
     [SerializeField] private GameObject zombieCanvas;
     [SerializeField] private TMP_Text waveIndicatorText;
 
+
     private GameObject obj;
 
     private bool HasMinigameEnded = false;
@@ -51,7 +52,10 @@ public class GoblinSpawner : MonoBehaviour
     private void OnDisable()
     {
         numberOfEnemiesKilled = 0;
-        zombieCanvas.SetActive(false);
+        if (zombieCanvas != null)
+        {
+            zombieCanvas.SetActive(false);
+        }
         if (coroutineEnemy != null)
         {
             StopAllCoroutines();
@@ -66,10 +70,7 @@ public class GoblinSpawner : MonoBehaviour
 
         RemoveWeapon();
 
-        if (HasMinigameEnded)
-        {
-            //TODO: 
-        }
+        
     }
 
     // Update is called once per frame
@@ -78,9 +79,20 @@ public class GoblinSpawner : MonoBehaviour
         if (numberOfEnemiesKilled.Equals(totalNumberOfEnemies))
         {
             FindAnyObjectByType<GameManager>().Minigame1_Flag = true;
+            waveIndicatorText.text = "Enemy count:\n" + numberOfEnemiesKilled + "/" + totalNumberOfEnemies;
+            numberOfEnemiesKilled = 0;
+            if (!HasMinigameEnded)
+            {
+                GetComponent<AudioSource>().Play();
+                HasMinigameEnded = true;
+            }
             OpenDoor();
         }
-        waveIndicatorText.text = "Enemy count:\n" + numberOfEnemiesKilled + "/" + totalNumberOfEnemies;
+        else 
+        { 
+            waveIndicatorText.text = "Enemy count:\n" + numberOfEnemiesKilled + "/" + totalNumberOfEnemies; 
+        }
+        
     }
 
     private void AddWeapon()
