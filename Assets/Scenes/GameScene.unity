@@ -17328,6 +17328,7 @@ MonoBehaviour:
   block3: {fileID: 888681493}
   materialIncorrect: {fileID: 2100000, guid: c7db3c74c6b61b74885639c30811ea4f, type: 2}
   materialCorrect: {fileID: 2100000, guid: f2ad4f3cb8166b94cb5d6d9ec51bca55, type: 2}
+  inputManager: {fileID: 11400000, guid: dea2c796bd8274b46b845c33d5b911af, type: 2}
 --- !u!4 &1151702456
 Transform:
   m_ObjectHideFlags: 0

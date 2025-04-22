@@ -119,6 +119,12 @@ public class PlayerBehaviour : MonoBehaviour, Damageable
         if (playerType == PlayerType.ThirdPerson) ThirdPersonMovement();
 
         if (playerType == PlayerType.FirstPerson) FirstPersonMovement();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            SceneManager.LoadSceneAsync("MenuScene");
+        }
     }
 
     private void ThirdPersonMovement()

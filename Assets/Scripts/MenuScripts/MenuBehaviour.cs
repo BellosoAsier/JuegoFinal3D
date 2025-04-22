@@ -9,4 +9,12 @@ public class MenuBehaviour : MonoBehaviour
     {
         SceneManager.LoadSceneAsync("GameScene");
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
 }

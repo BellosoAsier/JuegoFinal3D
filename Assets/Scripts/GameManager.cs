@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -30,9 +31,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material materialIncorrect;
     [SerializeField] private Material materialCorrect;
 
-    private void Awake()
+    [SerializeField] private InputManagerSO inputManager;
+
+    private void OnEnable()
     {
-        
+        inputManager.EnableInputs();
+    }
+
+    private void OnDisable()
+    {
+        inputManager.DisableInputs();
     }
 
     private void Update()

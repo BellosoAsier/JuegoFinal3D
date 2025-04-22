@@ -12,7 +12,7 @@ public class InputManagerSO : ScriptableObject
     public event Action<Vector2> OnMove;
     public event Action<bool> OnAim;
     public event Action OnShoot;
-    private void OnEnable()
+    public void EnableInputs()
     {
         myControls = new Controles();
         myControls.Gameplay.Enable();
@@ -28,7 +28,7 @@ public class InputManagerSO : ScriptableObject
         myControls.Gameplay.Shoot.started += Shoot;
     }
 
-    private void OnDisable()
+    public void DisableInputs()
     {
         myControls.Gameplay.Disable();
     }
