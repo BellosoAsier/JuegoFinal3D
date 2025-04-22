@@ -12,13 +12,6 @@ public class TeleporterBehaviour : MonoBehaviour
     {
         destination = gameObject.transform.GetChild(0).position;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))

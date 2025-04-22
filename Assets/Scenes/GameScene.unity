@@ -13030,7 +13030,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1453848729036340657, guid: b7a9defe5e3fc434f925c0d07d2319be, type: 3}
   enemyContainer: {fileID: 1890249013}
   mainDoor: {fileID: 477733575}
-  numberOfWaves: 2
+  numberOfWaves: 4
   numberOfEnemiesPerWave: 5
   secondsBetweenWaves: 2
   secondsBetweenEnemies: 3

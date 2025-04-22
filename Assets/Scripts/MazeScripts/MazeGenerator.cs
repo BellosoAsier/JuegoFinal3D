@@ -190,7 +190,6 @@ public  class MazeGenerator : MonoBehaviour
             {
                 MazeCellScript current = GetMazeCell(row, col);
 
-                // Comparar con la celda de la derecha
                 if (col + 1 < MazeColumnCount)
                 {
                     MazeCellScript right = GetMazeCell(row, col + 1);
@@ -202,7 +201,6 @@ public  class MazeGenerator : MonoBehaviour
                     }
                 }
 
-                // Comparar con la celda de arriba
                 if (row + 1 < MazeRowCount)
                 {
                     MazeCellScript top = GetMazeCell(row + 1, col);

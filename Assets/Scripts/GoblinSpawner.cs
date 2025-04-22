@@ -69,8 +69,6 @@ public class GoblinSpawner : MonoBehaviour
         player.IsZombieMinigame = false;
 
         RemoveWeapon();
-
-        
     }
 
     // Update is called once per frame

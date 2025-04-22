@@ -23,12 +23,6 @@ public class PuzzleRun : MonoBehaviour
         ChooseCombination();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void ChooseCombination()
     {
         ResetLevel();
